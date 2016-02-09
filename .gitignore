@@ -1,0 +1,10 @@
+*.log
+*.bmp
+*.jpg
+*.jpeg
+*.png
+*.sublime*
+*.iml
+.idea/
+out/
+bin/
