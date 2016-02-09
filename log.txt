@@ -1,0 +1,12 @@
+commit 7682897a662942e1a3408fe28158cf56af9ad4ca
+Author: Jurasikt <tsykun314@gmail.com>
+Date:   Tue Feb 9 04:20:28 2016 -0500
+
+    modified .gitignore
+
+commit a456ca269335645a3cc12decfe4d8cad11c09899
+Author: Jurasikt <tsykun314@gmail.com>
+Date:   Tue Feb 9 04:03:57 2016 -0500
+
+    Add .gitignore
+
