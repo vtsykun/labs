@@ -1,9 +1,12 @@
-*.log
+# images
 *.bmp
 *.jpg
 *.jpeg
 *.png
+*.gif
+# for sublime text
 *.sublime*
+# for idea
 *.iml
 .idea/
 out/
