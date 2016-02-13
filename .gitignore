@@ -4,10 +4,16 @@
 *.jpeg
 *.png
 *.gif
-# for sublime text
+#
+# sublime config
 *.sublime*
+#
 # for idea
 *.iml
 .idea/
+#
+# build 
 out/
 bin/
+*.class
+*.bat
