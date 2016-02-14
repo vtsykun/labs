@@ -15,11 +15,11 @@ import java.text.SimpleDateFormat;
 public class Message 
 {
 
-    public String home = "../var/";
+    private String homePath = "../var/";
 
-    public Map history = new HashMap<Integer,Item>();
+    private Map history = new HashMap<Integer,Item>();
 
-    public int maxId = 0;
+    private int maxId = 0;
 
     private Message() 
     {
@@ -32,7 +32,7 @@ public class Message
         Type t = new TypeToken<Map<Integer, Item>>(){}.getType();
 
         this.history = json.fromJson(
-            fileGetContent(this.home+"message.json"),t);
+            fileGetContent(this.homePath+"message.json"),t);
 
         Set<Map.Entry> ents = this.history.entrySet();
 
@@ -54,8 +54,8 @@ public class Message
             System.out.println("404 Not Found");
         } else {
     
-            System.out.println("ID: "+id+"\n\rAuthor: "+ms.author+"\n\rDate: "+
-                ms.date+"\n\r-------\n\r"+ms.message+"\n\r\n\r");
+            System.out.println("ID: "+id+"\n\rAuthor: "+ms.getAuthor()+"\n\rDate: "+
+                ms.getDate()+"\n\r-------\n\r"+ms.getMessage()+"\n\r\n\r");
 
         }
     }
@@ -71,6 +71,57 @@ public class Message
         for (Map.Entry<Integer, Item> item: ents) {
             this.echoById((int)item.getKey());
         }
+    }
+
+    public boolean searchByPregExp(String pattern)
+    {
+        boolean notFount = true;
+        Set<Map.Entry> ents = this.history.entrySet();
+
+        for (Map.Entry<Integer, Item> item: ents) {
+
+            Item ms = item.getValue();
+            if (ms.getMessage().matches(pattern)) {
+                notFount = false;
+                this.echoById((int)item.getKey());
+            }
+            
+        } 
+        return notFount;
+    }
+
+    public boolean searchByKeyWord(String key)
+    {
+        boolean notFount = true;
+        Set<Map.Entry> ents = this.history.entrySet();
+
+        for (Map.Entry<Integer, Item> item: ents) {
+            
+            Item ms = item.getValue();
+            if (ms.getMessage().indexOf(key) != -1) {
+                notFount = false;
+                this.echoById((int)item.getKey());
+            }
+            
+        }
+        return notFount;
+    }
+
+    public boolean searchByAuthor(String author)
+    {
+        boolean notFount = true;
+        Set<Map.Entry> ents = this.history.entrySet();
+
+        for (Map.Entry<Integer, Item> item: ents) {
+            
+            Item ms = item.getValue();
+            if (ms.getAuthor().equals(author)) {
+                notFount = false;
+                this.echoById((int)item.getKey());
+            }
+            
+        }
+        return notFount;
     }
 
     /**
@@ -102,7 +153,7 @@ public class Message
         String json = gson.toJson(this.history);
 
         try {
-            FileWriter fwrite = new FileWriter(this.home+"message.json");
+            FileWriter fwrite = new FileWriter(this.homePath+"message.json");
             fwrite.write(json);
             fwrite.close();
 

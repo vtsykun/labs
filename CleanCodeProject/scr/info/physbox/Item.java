@@ -1,12 +1,12 @@
 package info.physbox;
 
-//import MessageInterface
+//ORM
 
 public class Item implements MessageInterface 
 {
-    public String message = "";
-    public String date = "" ;
-    public String author = "";
+    private String message = "";
+    private String date = "" ;
+    private String author = "";
 
     public Item setDate(String date)
     {
@@ -25,4 +25,19 @@ public class Item implements MessageInterface
         this.author = author;
         return this;
     }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public String getAuthor()
+    {
+        return author;
+    }
+
+    public String getDate()
+    {
+        return date;
+    } 
 }
