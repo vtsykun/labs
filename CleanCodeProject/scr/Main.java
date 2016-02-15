@@ -9,13 +9,13 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import info.physbox.Controller;
+import info.physbox.MainController;
 
 public class Main {
 
     public static void main(String[] args) {
         
-        Controller controller = Controller.factory();
+        MainController controller = MainController.factory();
         controller.run();
     }
 }

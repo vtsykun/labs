@@ -23,10 +23,10 @@ public class Message
 
     private Message() 
     {
-        this.render();            
+        this.jsonDecode();            
     }
 
-    private void render()
+    private void jsonDecode()
     {
         Gson json = new GsonBuilder().create();
         Type t = new TypeToken<Map<Integer, Item>>(){}.getType();
@@ -122,6 +122,30 @@ public class Message
             
         }
         return notFount;
+    }
+
+    public boolean searchByDate(String from, String to) 
+    {
+        boolean notFount = true;
+
+        if (!from.matches("\\d{4}-\\d{2}-\\d{2}") || 
+                !to.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return false;
+        }
+        Set<Map.Entry> ents = this.history.entrySet();
+
+        for (Map.Entry<Integer, Item> item: ents) {
+
+            Item ms = item.getValue();
+            if (ms.getDate().compareTo(from) >= 0 && 
+                    ms.getDate().compareTo(to) <= 0) {
+                
+                notFount = false;
+                this.echoById((int)item.getKey());
+            }
+            
+        }
+        return notFount;        
     }
 
     /**
