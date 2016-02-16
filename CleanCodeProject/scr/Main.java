@@ -15,7 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
         
-        MainController controller = MainController.factory();
-        controller.run();
+        MainController.factory().run();
     }
 }

@@ -16,7 +16,7 @@ import info.physbox.kernel.Controller;
 public class MainController extends  Controller
 {
 
-    private Message ms;
+    private Message message;
 
     private String userName;
 
@@ -26,12 +26,12 @@ public class MainController extends  Controller
         Scanner in = new Scanner(System.in);
 
         this.userName = in.nextLine();
-        this.ms = Message.factory();
+        this.message = Message.factory();
     }
 
     protected void onClose()
     {
-        this.ms.saveHistory();
+        this.message.saveHistory();
     }
 
     protected boolean listing()
@@ -45,47 +45,46 @@ public class MainController extends  Controller
         switch (action) {
             case 0:
                 return true;
-                //break;
             case 1:
-                this.actionNew(this.ms, this.userName);
+                this.actionNew(this.userName);
                 break;
             case 2: 
-                this.actionShowAll(this.ms);
+                this.actionShowAll();
                 break;
             case 3: 
-                this.actionDelete(this.ms);
+                this.actionDelete();
                 break;
             case 4:
-                this.actionSearch(this.ms);
+                this.actionSearch();
                 break;
         }
         System.out.println("");
         return false;
     }
 
-    private void actionNew(Message ms, String userName)
+    private void actionNew(String userName)
     {
         System.out.println("Enter new message...");
         Scanner in = new Scanner(System.in);
         String text = in.nextLine();
         
-        ms.addMessage(text, userName);
+        this.message.addMessage(text, userName);
     }
 
-    private void actionShowAll(Message ms)
+    private void actionShowAll()
     {
-        ms.echoAll();
+        this.message.echoAll();
     }
 
-    private void actionDelete(Message ms)
+    private void actionDelete()
     {
         System.out.println("Please enter message id...");
         Scanner in = new Scanner(System.in);
         int id = in.nextInt();
-        ms.deleteById(id);        
+        this.message.deleteById(id);        
     }
 
-    private void actionSearch(Message ms)
+    private void actionSearch()
     {
         System.out.println("Search by...\n\r[0]: Regular expression\n\r"+
             "[1]: Author\n\r[2]: Key word\n\r[3]: Search by date");
@@ -98,25 +97,19 @@ public class MainController extends  Controller
                 System.out.println("Enter regexp...");
                 String regexp = in.nextLine();
                 regexp = in.nextLine();
-                if (ms.searchByPregExp(regexp)) {
-                    System.out.println("404 Not Found");
-                }
+                this.message.searchByPregExp(regexp);
                 break;
             case 1:
                 System.out.println("Enter author...");
                 String author = in.nextLine();
                 author = in.nextLine();
-                if (ms.searchByAuthor(author)) {
-                    System.out.println("404 Not Found");
-                }
+                this.message.searchByAuthor(author);
                 break;
             case 2:
                 System.out.println("Enter key word...");
                 String word = in.nextLine();
                 word = in.nextLine();
-                if (ms.searchByKeyWord(word)) {
-                    System.out.println("404 Not Found");
-                }            
+                this.message.searchByKeyWord(word);        
                 break;
             case 3:
                 System.out.println("Enter date in format YYYY-mm-dd\n\rFrom...");
@@ -124,9 +117,7 @@ public class MainController extends  Controller
                 from = in.nextLine();
                 System.out.println("Enter date in format YYYY-mm-dd\n\rTo...");
                 String to = in.nextLine();
-                if (ms.searchByDate(from,to)) {
-                    System.out.println("404 Not Found");
-                }            
+                this.message.searchByDate(from, to);
                 break;
         }
     }

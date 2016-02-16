@@ -4,9 +4,9 @@ package info.physbox;
 
 public class Item implements MessageInterface 
 {
-    private String message = "";
-    private String date = "" ;
-    private String author = "";
+    private String message;
+    private String date;
+    private String author;
 
     public Item setDate(String date)
     {

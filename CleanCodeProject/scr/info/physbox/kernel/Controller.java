@@ -9,22 +9,27 @@ import java.text.SimpleDateFormat;
 
 abstract public class Controller
 {
-	public void run()
-	{
-		this.onCreate();
+    public void run()
+    {
+        this.onCreate();
 
-		while (true) {
-			if (this.listing()) {
-				break;
-			}
-		}
-		this.onClose();
-	}
+        while (true) {
+            try {
+                if (this.listing()) {
+                    break;
+                }
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }
 
-	protected abstract void onCreate();
+        }
+        this.onClose();
+    }
 
-	protected abstract void onClose();
+    protected abstract void onCreate();
 
-	protected abstract boolean listing();
+    protected abstract void onClose();
+
+    protected abstract boolean listing();
 
 }

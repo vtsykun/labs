@@ -51,7 +51,7 @@ public class Message
     {
         Item ms = (Item)this.history.get((Integer)id);
         if (ms == null) {
-            System.out.println("404 Not Found");
+            throw new RuntimeException("404 Not Found");
         } else {
     
             System.out.println("ID: "+id+"\n\rAuthor: "+ms.getAuthor()+"\n\rDate: "+
@@ -61,8 +61,7 @@ public class Message
     }
 
     /**
-     * Выводит всю историю сообщений
-     *  
+     * Выводит всю историю сообщений  
      */
     public void echoAll()
     {
@@ -73,7 +72,7 @@ public class Message
         }
     }
 
-    public boolean searchByPregExp(String pattern)
+    public void searchByPregExp(String pattern)
     {
         boolean notFount = true;
         Set<Map.Entry> ents = this.history.entrySet();
@@ -87,10 +86,12 @@ public class Message
             }
             
         } 
-        return notFount;
+        if (notFount) {
+            throw new RuntimeException("404 Not Found");
+        }
     }
 
-    public boolean searchByKeyWord(String key)
+    public void searchByKeyWord(String key)
     {
         boolean notFount = true;
         Set<Map.Entry> ents = this.history.entrySet();
@@ -104,10 +105,12 @@ public class Message
             }
             
         }
-        return notFount;
+        if (notFount) {
+            throw new RuntimeException("404 Not Found");
+        }
     }
 
-    public boolean searchByAuthor(String author)
+    public void searchByAuthor(String author)
     {
         boolean notFount = true;
         Set<Map.Entry> ents = this.history.entrySet();
@@ -121,16 +124,18 @@ public class Message
             }
             
         }
-        return notFount;
+        if (notFount) {
+            throw new RuntimeException("404 Not Found");
+        }
     }
 
-    public boolean searchByDate(String from, String to) 
+    public void searchByDate(String from, String to) 
     {
         boolean notFount = true;
 
         if (!from.matches("\\d{4}-\\d{2}-\\d{2}") || 
                 !to.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return false;
+            throw new RuntimeException("Not valid date format");
         }
         Set<Map.Entry> ents = this.history.entrySet();
 
@@ -145,7 +150,9 @@ public class Message
             }
             
         }
-        return notFount;        
+        if (notFount) {
+            throw new RuntimeException("404 Not Found");
+        }        
     }
 
     /**
@@ -168,8 +175,7 @@ public class Message
     }
 
     /**
-     * Сохраняет все сообщения в файл .json
-     *
+     * Сохраняет все сообщения в файл *.json
      */
     public void saveHistory()
     {
