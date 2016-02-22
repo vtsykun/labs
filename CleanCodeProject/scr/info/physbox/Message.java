@@ -10,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-//import .Item;
 
 public class Message 
 {
@@ -19,15 +18,13 @@ public class Message
 
     private Map history = new HashMap<Integer,Item>();
 
-    private int maxId = 0;
+    private int maxId;
 
-    private Message() 
-    {
-        this.jsonDecode();            
+    private Message() {
+        this.jsonDecode();
     }
 
-    private void jsonDecode()
-    {
+    private void jsonDecode() {
         Gson json = new GsonBuilder().create();
         Type t = new TypeToken<Map<Integer, Item>>(){}.getType();
 
@@ -35,7 +32,6 @@ public class Message
             fileGetContent(this.homePath+"message.json"),t);
 
         Set<Map.Entry> ents = this.history.entrySet();
-
         for (Map.Entry<Integer, Item> item: ents) {
             if (this.maxId < (int)item.getKey()) {
                 this.maxId = (int)item.getKey();
@@ -45,15 +41,14 @@ public class Message
 
     /**
      * Выводит сообщения по индификатору 
-     * @param int id  идишник сообщения
+     * @param int id  id сообщения
      */
-    public void echoById(int id)
-    {
+    public void echoById(int id) {
         Item ms = (Item)this.history.get((Integer)id);
         if (ms == null) {
             throw new RuntimeException("404 Not Found");
         } else {
-    
+
             System.out.println("ID: "+id+"\n\rAuthor: "+ms.getAuthor()+"\n\rDate: "+
                 ms.getDate()+"\n\r-------\n\r"+ms.getMessage()+"\n\r\n\r");
 
@@ -63,8 +58,7 @@ public class Message
     /**
      * Выводит всю историю сообщений  
      */
-    public void echoAll()
-    {
+    public void echoAll() {
         Set<Map.Entry> ents = this.history.entrySet();
 
         for (Map.Entry<Integer, Item> item: ents) {
@@ -72,8 +66,7 @@ public class Message
         }
     }
 
-    public void searchByPregExp(String pattern)
-    {
+    public void searchByPregExp(String pattern) {
         boolean notFount = true;
         Set<Map.Entry> ents = this.history.entrySet();
 
@@ -84,26 +77,22 @@ public class Message
                 notFount = false;
                 this.echoById((int)item.getKey());
             }
-            
-        } 
+        }
         if (notFount) {
             throw new RuntimeException("404 Not Found");
         }
     }
 
-    public void searchByKeyWord(String key)
-    {
+    public void searchByKeyWord(String key) {
         boolean notFount = true;
         Set<Map.Entry> ents = this.history.entrySet();
 
         for (Map.Entry<Integer, Item> item: ents) {
-            
             Item ms = item.getValue();
             if (ms.getMessage().indexOf(key) != -1) {
                 notFount = false;
                 this.echoById((int)item.getKey());
             }
-            
         }
         if (notFount) {
             throw new RuntimeException("404 Not Found");
@@ -116,39 +105,34 @@ public class Message
         Set<Map.Entry> ents = this.history.entrySet();
 
         for (Map.Entry<Integer, Item> item: ents) {
-            
             Item ms = item.getValue();
             if (ms.getAuthor().equals(author)) {
                 notFount = false;
                 this.echoById((int)item.getKey());
             }
-            
         }
         if (notFount) {
             throw new RuntimeException("404 Not Found");
         }
     }
 
-    public void searchByDate(String from, String to) 
-    {
+    public void searchByDate(String from, String to) {
         boolean notFount = true;
 
         if (!from.matches("\\d{4}-\\d{2}-\\d{2}") || 
                 !to.matches("\\d{4}-\\d{2}-\\d{2}")) {
             throw new RuntimeException("Not valid date format");
         }
+
         Set<Map.Entry> ents = this.history.entrySet();
-
         for (Map.Entry<Integer, Item> item: ents) {
-
             Item ms = item.getValue();
             if (ms.getDate().compareTo(from) >= 0 && 
                     ms.getDate().compareTo(to) <= 0) {
                 
                 notFount = false;
                 this.echoById((int)item.getKey());
-            }
-            
+            }   
         }
         if (notFount) {
             throw new RuntimeException("404 Not Found");
@@ -160,8 +144,7 @@ public class Message
      * @param String message тект нового сообщения 
      * @paarm String author 
      */
-    public void addMessage(String message, String author)
-    {
+    public void addMessage(String message, String author) {
         Item newMessage = new Item();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -171,14 +154,12 @@ public class Message
             .setDate(dateFormat.format(date));
 
         this.history.put((Integer)(++this.maxId), newMessage);
-
     }
 
     /**
      * Сохраняет все сообщения в файл *.json
      */
-    public void saveHistory()
-    {
+    public void saveHistory() {
         Gson gson = new Gson();
         String json = gson.toJson(this.history);
 
@@ -186,19 +167,16 @@ public class Message
             FileWriter fwrite = new FileWriter(this.homePath+"message.json");
             fwrite.write(json);
             fwrite.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteById(int id) 
-    {
+    public void deleteById(int id) {
         this.history.remove((Integer)id);
     }
 
-    public String fileGetContent(String filename) 
-    {
+    public String fileGetContent(String filename) {
         File file = new File(filename); 
         String content = "";
         try {
@@ -215,8 +193,7 @@ public class Message
     }
 
 
-    public static Message factory()
-    {
+    public static Message factory() {
         return new Message();
     }
 

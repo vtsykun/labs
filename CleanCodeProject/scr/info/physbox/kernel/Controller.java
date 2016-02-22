@@ -9,8 +9,7 @@ import java.text.SimpleDateFormat;
 
 abstract public class Controller
 {
-    public void run()
-    {
+    public void run() {
         this.onCreate();
 
         while (true) {
@@ -21,7 +20,6 @@ abstract public class Controller
             } catch (RuntimeException e) {
                 System.out.println(e.getMessage());
             }
-
         }
         this.onClose();
     }
