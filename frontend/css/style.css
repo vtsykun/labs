@@ -1,0 +1,137 @@
+body {
+  font-family: 'Hind', sans-serif;
+  font-size:14px;
+  margin:0px;
+  padding:0px;
+  text-align: center;
+}
+input {
+  border:none;
+  padding:10px;
+  background:#999;
+  width:80%;
+  border-radius:2px;
+  color: #fff;
+  font-weight:bold;
+}
+footer {
+  background:#222;
+  width:100%;
+  margin-top: 20px;
+  color:#bbb;
+  font-size:1.2em;
+  font-weight:bold;
+}
+.btn{
+  padding: 7px;
+  background:rgb(154, 7, 7);
+  font-size:1.3em;
+  border-radius:6px;
+  color:#E6E6E6;
+  border:0px;
+  cursor:pointer;
+}
+
+.server {
+  text-align:left;
+  margin:5px;
+  margin-left:20px;
+}
+.green {
+  color:#438637;
+}
+.red {
+  color:#a11;
+}
+.message-box {
+  margin: 15px;
+  width: 100%;
+}
+.message-container {
+  padding: 18px;
+}
+.message-text {
+  background: #fff;
+  width: 75%;
+  padding:10px;
+  margin:auto;
+  display:table;
+  font-size:1.1em;
+}
+.left .message-text {
+  text-align:left;
+}
+
+.right .message-text {
+  text-align:right;
+}
+
+.left .message-avatar {
+  float:left;
+  margin-left: 20px;
+}
+.right .message-avatar {
+  float: right;
+  margin-right: 20px;
+}
+.form-box {
+  margin-top: 50px;
+}
+.delete {
+  background: #aaa;
+  width:75%;
+  padding:10px;
+  font-size:1.4em;
+  font-weight:bold;
+  margin:auto;
+  display:table;
+  color:#fff;
+}
+.action {
+  font-size:0.8em;
+}
+.action a {
+  color:#2D7EB7;
+  cursor:pointer;
+}
+.right .action {
+  display:none;
+}
+
+::-webkit-input-placeholder {
+    color: #fff;
+}
+
+@media screen and (min-width: 1300px) {
+  .container {
+    margin: auto;
+    width:680px;
+    background: rgba(0,0,0,0.1);
+    box-shadow: 0 6px 10px 0 rgba(0,0,0,.2);
+  }
+  .footer-inner {
+    padding:1px;
+    width: 600px;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .container {
+    margin: 5%;
+    background: rgba(0,0,0,0.1);
+    box-shadow: 0 10px 10px 0 rgba(0,0,0,0.1);
+  }
+  .footer-inner {
+    padding:1px;
+    margin-left:40px;
+    margin-right:40px;
+    margin-top:10px;
+  }
+  input {
+    width:50%;
+  }
+  .message-text {
+    width: 50%;
+  }
+}
