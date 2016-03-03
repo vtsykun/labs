@@ -22,6 +22,24 @@ footer {
   font-size:1.2em;
   font-weight:bold;
 }
+
+.scroll-container {
+  height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background:#F4F4F5;
+}
+
+.scroll-container::-webkit-scrollbar {
+    width: 8px;
+} 
+.scroll-container::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 8px rgb(43,43,38); 
+} 
+.scroll-container::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 8px rgb(43,43,38); 
+}
+
 .btn{
   padding: 7px;
   background:rgb(154, 7, 7);
@@ -98,6 +116,10 @@ footer {
   display:none;
 }
 
+.none {
+  display:none;
+}
+
 ::-webkit-input-placeholder {
     color: #fff;
 }
@@ -134,4 +156,13 @@ footer {
   .message-text {
     width: 50%;
   }
+}
+
+.zero-10 {
+  height:10px;
+}
+.zero-20 {
+  height:20px;
+}.zero-40 {
+  height:40px;
 }
