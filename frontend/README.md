@@ -2,7 +2,7 @@
 
 You can see this chat [here](http://fpmi.physbox.info)
 
-## Full featured
+## Full features
 
 - simple interface
 - usability
