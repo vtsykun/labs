@@ -11,6 +11,7 @@ You can see this chat [here](http://fpmi.physbox.info) or https fork with a self
 - ajax load
 - xss and html injection protection
 - nginx logging
+- hypertext transfer protocol version 2 (http2)
 
 # Licenses
 
