@@ -18,4 +18,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^api/message$', views.message, name='message'),
+    url(r'^api/message/(?P<id>[0-9]+)/$', views.update_message, name='update_message'),
+    url(r'^api/message/(?P<id>[0-9]+)/delete$', views.delete_message, name='delete_message')
 ]
