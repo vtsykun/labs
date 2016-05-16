@@ -24,7 +24,7 @@
         <input type="text" placeholder="Press [Shift]+[Enter] to send a message" id="sendText"></input>
         <button class="btn" onclick = "sendMessage()">Send</button>
         <div class="server">
-          SERVER 85.143.223.70 <b class="green">online</b><br>
+          SERVER  <b class="green">online</b><br>
           <div class="action">
             <a onclick="modalTrigger('modal1')">change nikname</a>
           </div>
@@ -41,10 +41,10 @@
     <p>All rights reserved(c) 2016</p>
   </div>
 </footer>
-<!-- message bundle -->
+<!-- message  -->
 <div class="message-box left none">
   <div class="message-avatar">
-    <img src="img/noavatar.jpg" width="50px" height="50px">
+    <img src="{% static 'img/noavatar.jpg' %}" width="50px" height="50px">
     <div class="action">
       <a>edit</a>
       <a>delete</a>

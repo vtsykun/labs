@@ -1,28 +1,3 @@
-var socket = new WebSocket("ws://85.143.223.70:8001");
-
-socket.onopen = function() {
-  console.log("ws://85.143.223.70:8001");
-};
-
-socket.onclose = function(event) {
-  console.log('close');
-};
-
-socket.onmessage = function(event) {
-    console.log("message: " + event.data);
-    data = JSON.parse(event.data);
-    MessagesBox.items[(++MessagesBox.maxId)] = data;
-    item = printMessage(data.author, data.text, data.datetime, MessagesBox.maxId);
-    console.log(item);
-    scroll = document.getElementsByClassName('scroll-container')[0];
-    scroll.appendChild(item);
-    scroll.scrollTop = scroll.scrollHeight;
-};
-
-socket.onerror = function(error) {
-  console.log("error");
-};
-
 Cookie = {
 set: function(name, value) {
         var expires = new Date();
@@ -41,64 +16,159 @@ get: function(cname) {
     }
 }
 
-MessagesBox = {
-    maxId: 0,
-    items:{},
-};
+last_id = 0;
 
-function printMessage(author, message, date, id) {
+function printMessage(data) {
     var item = document.getElementsByClassName('message-box left none')[0].cloneNode(true);
     item.classList.remove('none');
-    if (author == Cookie.get('nikename')) {
+    item.setAttribute("id", data.message_id);
+
+    var textDate = '';
+
+    if (data.change) {
+        textDate += 'Last-Modified: ';
+    } 
+    textDate += data.stime + ' UTC';
+
+    if (data.nikename == Cookie.get('nikename')) {
         item.classList.add('left');
         item.getElementsByTagName('b')[0].
-            setAttribute('tooltip-l',date+' UTC');
+            setAttribute('tooltip-l', textDate);
     } else {
         item.classList.add('right');
         item.getElementsByTagName('b')[0].
-            setAttribute('tooltip-r',date+' UTC');
+            setAttribute('tooltip-r', textDate);
     }
     inner = item.getElementsByClassName('message-text')[0];
-    if (message == '') {
+    if (data.body == '') {
         item.getElementsByClassName('action')[0].innerHTML = "";
+
         inner.innerHTML = "Message has been was deleted";
         inner.classList.remove('message-text');
         inner.classList.add('delete');
     } else {
-        item.getElementsByTagName('b')[0].innerText = '@'+author;
-        item.setAttribute("id", id);
+        item.getElementsByTagName('b')[0].innerText = '@'+data.nikename;
+        
         item.getElementsByTagName('a')[0]
-            .setAttribute('onclick','editMessage('+id+')');
+            .setAttribute('onclick','editMessage('+data.message_id+')');
         item.getElementsByTagName('a')[1]
-            .setAttribute('onclick','deleteMessage('+id+')');
-        inner.innerHTML = inner.innerHTML + htmlSpecialChars(message);        
+            .setAttribute('onclick','deleteMessage('+data.message_id+')');
+        inner.innerHTML = inner.innerHTML + '<p>' + htmlSpecialChars(data.body) +'</p>';        
     }
+
     return item;
 }
 
-function htmlSpecialChars(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;")
-        .replace(/\n/g, "<br>");
- }
+function refreshMessage(item) {
+    var element = document.getElementById(item.message_id);
+
+    if (element == null) {
+        element = printMessage(item);
+        scroll = document.getElementsByClassName('scroll-container')[0];
+        scroll.appendChild(element);
+        scroll.scrollTop = scroll.scrollHeight;
+        return;
+    }
+
+    inner = element.getElementsByClassName('message-text')[0];
+
+    if (inner == null) {
+        return;
+    }
+
+    if (!item.active) {
+        inner.classList.add('delete');
+        inner.classList.remove('message-text');
+        inner.innerHTML = "Message has been was deleted";
+        element.getElementsByClassName('action')[0].innerHTML = "";
+        return;  
+    }
+
+    if (item.nikename == Cookie.get('nikename')) {
+        inner.getElementsByTagName('b')[0].removeAttribute('tooltip-r');        
+        inner.getElementsByTagName('b')[0].
+            setAttribute('tooltip-l','Last-Modified: ' +  item.stime + ' UTC');
+    } else {
+        inner.getElementsByTagName('b')[0].removeAttribute('tooltip-l');    
+        inner.getElementsByTagName('b')[0].
+            setAttribute('tooltip-r','Last-Modified: ' +  item.stime + ' UTC');
+    }
+
+    inner.getElementsByTagName('p')[0].innerText = item.body;
+}
+
+function editMessage(id) {
+    var form = document.getElementById('modal2');
+    var element = document.getElementById(id);
+
+    form.getElementsByTagName('textarea')[0].value = 
+        element.getElementsByClassName('message-text')[0].getElementsByTagName('p')[0].innerText;
+    form.getElementsByTagName('button')[0].
+        setAttribute('onclick','saveEditMessage('+id+')');
+    modalTrigger('modal2');
+}
+
+
+function saveEditMessage(id) {
+    form = document.getElementById('modal2');
+    
+    var data = new FormData();
+    data.append('text', form.getElementsByTagName('textarea')[0].value);
+
+    if (form.getElementsByTagName('textarea')[0].value.replace(/ /g, '') == '') {
+        alert('Message can not be empty');
+    } else {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", '/api/message/' + id + '/' , true);
+        xmlhttp.send(data);
+        modalTrigger('modal2');        
+    }
+}
+
+function deleteMessage(id) {
+    if (confirm("Are you sure what you want to remove this message?")) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", '/api/message/' + id + '/delete' , true);
+        xmlhttp.send();
+    }
+}
 
 function sendMessage() {
     var input = document.getElementById('sendText');
     if (input.value.replace(/ /g, '') == '') {
         alert('Message can not be empty');
-    } else {
-        date = simpleDate();
-
-        socket.send(JSON.stringify({"datetime":date, "text":input.value, "author":Cookie.get('nikename')}));
-        input.value = "";
-
+        return;
     }
+
+    var data = new FormData();
+    data.append('text', input.value);
+    data.append('user', Cookie.get('nikename'));
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", '/api/message' , true);
+    xmlhttp.send(data);
+    input.value = '';
 }
 
+function getMessage() {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var json = JSON.parse(xmlhttp.responseText);
+            for (var id in json) {
+                var item = json[id];
+
+                if (item.mbid > last_id) {
+                    last_id = item.mbid;
+                }
+                refreshMessage(item);
+                console.log(item);
+            }
+        }
+    };
+    xmlhttp.open("GET", '/api/message?last=' + last_id , true);
+    xmlhttp.send();
+}
 
 function modalTrigger(modal) {
     sirm = document.getElementById(modal);
@@ -111,59 +181,28 @@ function modalTrigger(modal) {
     }
 }
 
-function simpleDate() {
-    s = new Date().toISOString();
-    return s.slice(0,10)+" "+s.slice(11,19);
+function autoGetMessage() {
+    setInterval(getMessage, 1000);
 }
 
-function deleteMessage(id) {
-    if (confirm("Are you sure what you want to remove this message?")) {
-        MessagesBox.items[id].text = "";
-        item = document.getElementById(id);
-        inner = item.getElementsByClassName('message-text')[0];
-        inner.classList.add('delete');
-        inner.classList.remove('message-text');
-        inner.innerHTML = "Message has been was deleted";
-        item.getElementsByClassName('action')[0].innerHTML = "";        
-    }
+function htmlSpecialChars(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\n/g, "<br>");
 }
-
-function editMessage(id) {
-    form = document.getElementById('modal2');
-    form.getElementsByTagName('textarea')[0].value = MessagesBox.items[id].text;
-    form.getElementsByTagName('button')[0].
-        setAttribute('onclick','saveEditMessage('+id+')');
-    modalTrigger('modal2');
-}
-
-function saveEditMessage(id) {
-    now = simpleDate();
-    author = Cookie.get('nikename');
-    form = document.getElementById('modal2');
-    message = form.getElementsByTagName('textarea')[0].value;
-    if (message.replace(/ /g, '') == '') {
-        alert('Message can not be empty');
-    } else {
-        item = document.getElementById(id);
-        text = item.getElementsByClassName('message-text')[0];
-        text.innerHTML = '<b class="author"></b><br>' + htmlSpecialChars(message);
-        text.getElementsByTagName('b')[0].innerText = '@'+htmlSpecialChars(author);
-        item.getElementsByTagName('b')[0].
-            setAttribute('tooltip-l','Last-Modified: '+now+' UTC');
-        MessagesBox.items[id].text = message;
-        MessagesBox.items[id].date = now;
-        modalTrigger('modal2');        
-    }
-}
-
 
 window.onload = function(){
+    autoGetMessage();
     document.getElementById('nikBtn').addEventListener('click', function(){
         Cookie.set('nikename', document.getElementById('nikInput').value);
         modalTrigger('modal1');
     });
     document.getElementById("sendText").addEventListener("keydown", function(e) {
-        if (e.keyCode == 13 /*&& e.shiftKey*/) {
+        if (e.keyCode == 13) {
             sendMessage();
         }
     });
@@ -172,45 +211,4 @@ window.onload = function(){
         Cookie.set('nikename','Guest');
     }
 
-    // MessagesBox = localStorage.getItem('chat');
-    if (MessagesBox == null) {
-        MessagesBox = {
-            maxId: 0,
-            items:{},
-        };
-    } else {
-        MessagesBox = JSON.parse(MessagesBox);
-    }
-    
-    // var xmlhttp = new XMLHttpRequest();
-    // xmlhttp.onreadystatechange = function() {
-    //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-    //         var json = JSON.parse(xmlhttp.responseText);
-    //         callback(json);
-    //     }
-    // };
-    // xmlhttp.open("GET", 'ajax/message.json', true);
-    // xmlhttp.send();
-
-    // function callback(json) {
-    //     scroll = document.getElementsByClassName('scroll-container')[0];
-        
-    //     for (var id in json) {
-    //         MessagesBox.items[id] = json[id];
-    //     }
-
-    //     for (var id in MessagesBox.items) {
-    //         item = MessagesBox.items[id];
-    //         inner = printMessage(item.author, item.text, item.datetime, id);
-    //         scroll.appendChild(inner);
-    //         if (MessagesBox.maxId < id) {
-    //             MessagesBox.maxId = id;
-    //         }
-    //     }
-    //     scroll.scrollTo(0,scroll.scrollHeight);
-    // };
 }
-
-// window.onbeforeunload = function(){
-//     localStorage.setItem("chat", JSON.stringify(MessagesBox));
-// }
